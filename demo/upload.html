@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <base href="/">
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-storage.js"></script>
+<script>
+    window.emrEnv = new URLSearchParams(window.location.search).get('env') || 'qa';
+
+    // Initialize Firebase
+    let firebaseConfigs = {
+        qa: {
+            apiKey: "AIzaSyBFMJGeJIunOKRVJsmNBc3rwHc-BMAoxXQ",
+            authDomain: "pet-emr-qa.firebaseapp.com",
+            projectId: "pet-emr-qa",
+            storageBucket: "pet-emr-qa.appspot.com",
+            messagingSenderId: "393996680501",
+            appId: "1:393996680501:web:c1c6738efe5d629b7b607c",
+        },
+        staging: {
+            apiKey: "AIzaSyBDEjTVbBMsNzXqiwiIqfYcyN8l4GONuTA",
+            authDomain: "pet-emr-staging.firebaseapp.com",
+            projectId: "pet-emr-staging",
+            storageBucket: "pet-emr-staging.appspot.com",
+            messagingSenderId: "707474744166",
+            appId: "1:707474744166:web:42ac4ca8344c6c7637dea7"
+        },
+    };
+    firebase.initializeApp(firebaseConfigs[emrEnv]);
+</script>
+
+<h3>EMR Upload Demo</h3>
+
+You can upload a file using CURL:
+<br><br>
+<code id="curl">
+    curl -F 'file=@/home/user/Pictures/<b>Pet.jpg</b>'
+    'https://firebasestorage.googleapis.com/v0/b/pet-emr-${emrEnv}.appspot.com/o?name=upload%2FPet.jpg%3FPetID=${petID}'
+</code>
+<br><br>
+(Note that correct file name should be specified in two places.)
+
+<p>
+    or directly from this page:
+</p>
+
+<p>
+    <label for="petID">Pet ID</label>
+    <input type="text" id="petID" name="petID" placeholder="Enter Pet ID for the file"/>
+</p>
+
+<p>
+    <input type="file" id="fileButton"/>
+</p>
+
+<script>
+    const fileButton = document.getElementById("fileButton");
+    const petIdField = document.getElementById("petID");
+    const petID = new URLSearchParams(window.location.search).get('petID') || '';
+    petIdField.value = petID;
+    const curl = document.getElementById("curl")
+    curl.innerText = curl.innerText.replace('${emrEnv}', emrEnv).replace('${petID}', petID);
+
+    fileButton.addEventListener("change", function(e){
+        let file = e.target.files[0];
+        let storageRef = firebase.storage().ref("/upload/" + file.name + "?PetID=" + petIdField.value);
+        storageRef.put(file);
+        close();
+    });
+</script>
+
+</body>
+</html>

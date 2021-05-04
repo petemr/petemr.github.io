@@ -69,7 +69,7 @@ You can upload a file using CURL:
         let file = e.target.files[0];
         let storageRef = firebase.storage().ref("/upload/" + file.name + "?PetID=" + petIdField.value);
         storageRef.put(file);
-        alert('Upload started. Please refresh image list in EMR.');
+        alert('Upload started, do not close this tab. Click Refresh button under file list in EMR.');
     });
 </script>
 
